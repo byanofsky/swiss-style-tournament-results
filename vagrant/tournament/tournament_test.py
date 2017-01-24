@@ -42,32 +42,32 @@ def test_count():
             "After deletion, countPlayers should return zero.")
     print "4. countPlayers() returns zero after registered players are deleted.\n5. Player records successfully deleted."
 
-# def testStandingsBeforeMatches():
-#     """
-#     Test to ensure players are properly represented in standings prior
-#     to any matches being reported.
-#     """
-#     deleteMatches()
-#     deletePlayers()
-#     registerPlayer("Melpomene Murray")
-#     registerPlayer("Randy Schwartz")
-#     standings = playerStandings()
-#     if len(standings) < 2:
-#         raise ValueError("Players should appear in playerStandings even before "
-#                          "they have played any matches.")
-#     elif len(standings) > 2:
-#         raise ValueError("Only registered players should appear in standings.")
-#     if len(standings[0]) != 4:
-#         raise ValueError("Each playerStandings row should have four columns.")
-#     [(id1, name1, wins1, matches1), (id2, name2, wins2, matches2)] = standings
-#     if matches1 != 0 or matches2 != 0 or wins1 != 0 or wins2 != 0:
-#         raise ValueError(
-#             "Newly registered players should have no matches or wins.")
-#     if set([name1, name2]) != set(["Melpomene Murray", "Randy Schwartz"]):
-#         raise ValueError("Registered players' names should appear in standings, "
-#                          "even if they have no matches played.")
-#     print "6. Newly registered players appear in the standings with no matches."
-#
+def test_standings_before_matches():
+    """
+    Test to ensure players are properly represented in standings prior
+    to any matches being reported.
+    """
+    delete_matches()
+    delete_players()
+    register_player("Melpomene Murray")
+    register_player("Randy Schwartz")
+    standings = player_standings()
+    if len(standings) < 2:
+        raise ValueError("Players should appear in playerStandings even before "
+                         "they have played any matches.")
+    elif len(standings) > 2:
+        raise ValueError("Only registered players should appear in standings.")
+    if len(standings[0]) != 4:
+        raise ValueError("Each playerStandings row should have four columns.")
+    [(id1, name1, wins1, matches1), (id2, name2, wins2, matches2)] = standings
+    if matches1 != 0 or matches2 != 0 or wins1 != 0 or wins2 != 0:
+        raise ValueError(
+            "Newly registered players should have no matches or wins.")
+    if set([name1, name2]) != set(["Melpomene Murray", "Randy Schwartz"]):
+        raise ValueError("Registered players' names should appear in standings, "
+                         "even if they have no matches played.")
+    print "6. Newly registered players appear in the standings with no matches."
+
 # def testReportMatches():
 #     """
 #     Test that matches are reported properly.
@@ -149,7 +149,7 @@ def test_count():
 
 if __name__ == '__main__':
     test_count()
-    # testStandingsBeforeMatches()
+    test_standings_before_matches()
     # testReportMatches()
     # testPairings()
     print "Success!  All tests pass!"
