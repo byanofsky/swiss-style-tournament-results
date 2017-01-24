@@ -85,7 +85,7 @@ def player_standings(cur, conn):
         ON players.id = matches.winner
             OR players.id = matches.loser
         GROUP BY players.id
-        ORDER BY wins DESC;
+        ORDER BY wins DESC, players.id;
     ''')
     return cur.fetchall()
 
