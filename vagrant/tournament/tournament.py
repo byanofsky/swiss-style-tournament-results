@@ -58,7 +58,7 @@ def count_players():
     conn.close()
 
 
-def registerPlayer(name):
+def register_player(name):
     """Adds a player to the tournament database.
 
     The database assigns a unique serial id number for the player.  (This
