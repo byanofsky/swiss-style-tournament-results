@@ -5,6 +5,7 @@
 #
 # If you do add any of the extra credit options, be sure to add/modify these test cases
 # as appropriate to account for your module's added functionality.
+import random
 
 from tournament import *
 
@@ -147,9 +148,39 @@ def test_pairings():
     print "10. After one match, players with one win are properly paired."
 
 
+def test_champion():
+    """
+    Test database to see if a champion is found.
+    # of rounds = 2
+    """
+    delete_matches()
+    delete_players()
+    register_player("Brandon")
+    register_player("Jeff")
+    register_player("Duncan")
+    register_player("Mackie")
+
+    rounds = 2
+    for r in range(rounds):
+        standings = player_standings()
+        [id1, id2, id3, id4] = [row[0] for row in standings]
+        if random.randint(0,1):
+            report_match(id1, id2)
+        else:
+            report_match(id2, id1)
+        if random.randint(0,1):
+            report_match(id3, id4)
+        else:
+            report_match(id4, id3)
+    print player_standings()
+
+
+
+
 if __name__ == '__main__':
     test_count()
     test_standings_before_matches()
     test_report_matches()
     test_pairings()
+    test_champion()
     print "Success!  All tests pass!"

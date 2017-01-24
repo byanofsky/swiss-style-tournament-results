@@ -23,7 +23,8 @@ CREATE VIEW wins AS
         matches.id as match
     FROM players
     LEFT JOIN matches
-    ON players.id = matches.winner;
+    ON players.id = matches.winner
+    ORDER BY players.id;
 -- CREATE TABLE winners (
 --     match_id integer,
 --     pid integer REFERENCES players (id),
