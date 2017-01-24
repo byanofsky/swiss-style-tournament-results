@@ -2,66 +2,52 @@
 #
 # tournament.py -- implementation of a Swiss-system tournament
 #
-
+from functools import wraps
 import psycopg2
 
 
-def connect():
-    """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+def db_connect(f):
+    """Decorator for opening and closing db connection."""
+    @wraps(f)
+    def wrapper(*a, **kw):
+        # Connect to database and open cursor
+        conn = psycopg2.connect("dbname=tournament")
+        cur = conn.cursor()
 
-def delete_matches():
+        # Call function and save return to result
+        result = f(cur, conn, *a, **kw)
+
+        # Close cursor and database connections
+        cur.close()
+        conn.close()
+
+        # Return any results from database call
+        return result
+    return wrapper
+
+
+@db_connect
+def delete_matches(cur, conn):
     """Remove all the match records from the database."""
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Execute a command: this creates a new table
     cur.execute("DELETE FROM matches;")
-
-    # Make the changes to the database persistent
     conn.commit()
 
-    # Close communication with the database
-    cur.close()
-    conn.close()
-
-
-def delete_players():
+@db_connect
+def delete_players(cur, conn):
     """Remove all the player records from the database."""
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Execute a command: this creates a new table
     cur.execute("DELETE FROM players;")
-
-    # Make the changes to the database persistent
     conn.commit()
 
-    # Close communication with the database
-    cur.close()
-    conn.close()
-
-def count_players():
+@db_connect
+def count_players(cur, conn):
     """Returns the number of players currently registered."""
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Query the database and obtain data as Python objects
     cur.execute("SELECT count(*) FROM players;")
     row = cur.fetchone()
     count = int(row[0])
-
-    # Close communication with the database
-    cur.close()
-    conn.close()
-
     return count
 
-
-def register_player(name):
+@db_connect
+def register_player(cur, conn, name):
     """Adds a player to the tournament database.
 
     The database assigns a unique serial id number for the player.  (This
@@ -70,23 +56,11 @@ def register_player(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Pass data to fill a query placeholders and let Psycopg perform
-    # the correct conversion (no more SQL injections!)
     cur.execute("INSERT INTO players (name) VALUES (%s)", (name,))
-
-    # Make the changes to the database persistent
     conn.commit()
 
-    # Close communication with the database
-    cur.close()
-    conn.close()
-
-
-def player_standings():
+@db_connect
+def player_standings(cur, conn):
     """Returns a list of the players and their win records, sorted by wins.
 
     The first entry in the list should be the player in first place, or a player
@@ -99,11 +73,6 @@ def player_standings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Query the database and obtain data as Python objects
     cur.execute('''
         SELECT players.id,
             players.name,
@@ -118,45 +87,24 @@ def player_standings():
         GROUP BY players.id
         ORDER BY wins DESC;
     ''')
+    return cur.fetchall()
 
-    rows = cur.fetchall()
-
-    # Close communication with the database
-    cur.close()
-    conn.close()
-
-    return rows
-
-
-def report_match(winner, loser):
+@db_connect
+def report_match(cur, conn, winner, loser):
     """Records the outcome of a single match between two players.
 
     Args:
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    conn = connect()
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Pass data to fill a query placeholders and let Psycopg perform
-    # the correct conversion (no more SQL injections!)
-    cur.execute('''
-        INSERT INTO matches (winner, loser)
-        VALUES (%s, %s);
-        ''',
+    cur.execute(
+        "INSERT INTO matches (winner, loser) VALUES (%s, %s);",
         (winner, loser)
     )
-
-    # Make the changes to the database persistent
     conn.commit()
 
-    # Close communication with the database
-    cur.close()
-    conn.close()
 
-
-def swissPairings():
+def swiss_pairings():
     """Returns a list of pairs of players for the next round of a match.
 
     Assuming that there are an even number of players registered, each player
@@ -171,3 +119,10 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    standings = player_standings()
+    pairs = []
+    while standings:
+        p1 = standings.pop(0)
+        p2 = standings.pop(0)
+        pairs.append((p1[0], p1[1], p2[0], p2[1]))
+    return pairs
