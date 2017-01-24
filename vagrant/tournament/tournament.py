@@ -51,11 +51,14 @@ def count_players():
 
     # Query the database and obtain data as Python objects
     cur.execute("SELECT count(*) FROM players;")
-    return cur.fetchone()
+    row = cur.fetchone()
+    count = int(row[0])
 
     # Close communication with the database
     cur.close()
     conn.close()
+
+    return count
 
 
 def register_player(name):
