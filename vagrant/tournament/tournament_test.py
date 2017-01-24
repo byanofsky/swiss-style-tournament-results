@@ -68,41 +68,41 @@ def test_standings_before_matches():
                          "even if they have no matches played.")
     print "6. Newly registered players appear in the standings with no matches."
 
-# def testReportMatches():
-#     """
-#     Test that matches are reported properly.
-#     Test to confirm matches are deleted properly.
-#     """
-#     deleteMatches()
-#     deletePlayers()
-#     registerPlayer("Bruno Walton")
-#     registerPlayer("Boots O'Neal")
-#     registerPlayer("Cathy Burton")
-#     registerPlayer("Diane Grant")
-#     standings = playerStandings()
-#     [id1, id2, id3, id4] = [row[0] for row in standings]
-#     reportMatch(id1, id2)
-#     reportMatch(id3, id4)
-#     standings = playerStandings()
-#     for (i, n, w, m) in standings:
-#         if m != 1:
-#             raise ValueError("Each player should have one match recorded.")
-#         if i in (id1, id3) and w != 1:
-#             raise ValueError("Each match winner should have one win recorded.")
-#         elif i in (id2, id4) and w != 0:
-#             raise ValueError("Each match loser should have zero wins recorded.")
-#     print "7. After a match, players have updated standings."
-#     deleteMatches()
-#     standings = playerStandings()
-#     if len(standings) != 4:
-#         raise ValueError("Match deletion should not change number of players in standings.")
-#     for (i, n, w, m) in standings:
-#         if m != 0:
-#             raise ValueError("After deleting matches, players should have zero matches recorded.")
-#         if w != 0:
-#             raise ValueError("After deleting matches, players should have zero wins recorded.")
-#     print "8. After match deletion, player standings are properly reset.\n9. Matches are properly deleted."
-#
+def test_report_matches():
+    """
+    Test that matches are reported properly.
+    Test to confirm matches are deleted properly.
+    """
+    delete_matches()
+    delete_players()
+    register_player("Bruno Walton")
+    register_player("Boots O'Neal")
+    register_player("Cathy Burton")
+    register_player("Diane Grant")
+    standings = player_standings()
+    [id1, id2, id3, id4] = [row[0] for row in standings]
+    report_match(id1, id2)
+    report_match(id3, id4)
+    standings = player_standings()
+    for (i, n, w, m) in standings:
+        if m != 1:
+            raise ValueError("Each player should have one match recorded.")
+        if i in (id1, id3) and w != 1:
+            raise ValueError("Each match winner should have one win recorded.")
+        elif i in (id2, id4) and w != 0:
+            raise ValueError("Each match loser should have zero wins recorded.")
+    print "7. After a match, players have updated standings."
+    delete_matches()
+    standings = player_standings()
+    if len(standings) != 4:
+        raise ValueError("Match deletion should not change number of players in standings.")
+    for (i, n, w, m) in standings:
+        if m != 0:
+            raise ValueError("After deleting matches, players should have zero matches recorded.")
+        if w != 0:
+            raise ValueError("After deleting matches, players should have zero wins recorded.")
+    print "8. After match deletion, player standings are properly reset.\n9. Matches are properly deleted."
+
 # def testPairings():
 #     """
 #     Test that pairings are generated properly both before and after match reporting.
@@ -150,6 +150,6 @@ def test_standings_before_matches():
 if __name__ == '__main__':
     test_count()
     test_standings_before_matches()
-    # testReportMatches()
+    test_report_matches()
     # testPairings()
     print "Success!  All tests pass!"
