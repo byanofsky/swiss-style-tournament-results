@@ -14,13 +14,19 @@ CREATE TABLE players (
     name text
 );
 CREATE TABLE matches (
-    id serial,
-    pid integer REFERENCES players (id),
-    PRIMARY KEY (id, pid)
+    id serial PRIMARY KEY,
+    winner integer REFERENCES players (id),
+    loser integer REFERENCES players (id)
 );
-CREATE TABLE winners (
-    match_id integer,
-    pid integer REFERENCES players (id),
-    PRIMARY KEY (match_id, pid),
-    FOREIGN KEY (match_id, pid) REFERENCES matches (id, pid)
-);
+CREATE VIEW wins AS
+    SELECT players.id,
+        matches.id as match
+    FROM players
+    LEFT JOIN matches
+    ON players.id = matches.winner;
+-- CREATE TABLE winners (
+--     match_id integer,
+--     pid integer REFERENCES players (id),
+--     PRIMARY KEY (match_id, pid),
+--     FOREIGN KEY (match_id, pid) REFERENCES matches (id, pid)
+-- );
