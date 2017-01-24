@@ -86,7 +86,7 @@ def register_player(name):
     conn.close()
 
 
-def playerStandings():
+def player_standings():
     """Returns a list of the players and their win records, sorted by wins.
 
     The first entry in the list should be the player in first place, or a player
@@ -99,6 +99,31 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    conn = connect()
+    # Open a cursor to perform database operations
+    cur = conn.cursor()
+
+    # Query the database and obtain data as Python objects
+    cur.execute('''
+        SELECT players.id,
+            players.name,
+            count(winners.match_id) as wins,
+            count(matches.id) as matches
+        FROM players
+        LEFT JOIN matches
+        ON players.id = matches.pid
+        LEFT JOIN winners
+        ON players.id = winners.pid
+        GROUP BY players.id
+        ORDER BY wins;
+    ''')
+    rows = cur.fetchall()
+
+    # Close communication with the database
+    cur.close()
+    conn.close()
+
+    return rows
 
 
 def reportMatch(winner, loser):
