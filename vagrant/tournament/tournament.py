@@ -107,16 +107,18 @@ def player_standings():
     cur.execute('''
         SELECT players.id,
             players.name,
-            count(winners.match_id) as wins,
+            count(wins.match) as wins,
             count(matches.id) as matches
         FROM players
+        LEFT JOIN wins
+        ON players.id = wins.id
         LEFT JOIN matches
-        ON players.id = matches.pid
-        LEFT JOIN winners
-        ON players.id = winners.pid
+        ON players.id = matches.winner
+            OR players.id = matches.loser
         GROUP BY players.id
-        ORDER BY wins;
+        ORDER BY wins DESC;
     ''')
+
     rows = cur.fetchall()
 
     # Close communication with the database
@@ -126,13 +128,32 @@ def player_standings():
     return rows
 
 
-def reportMatch(winner, loser):
+def report_match(winner, loser):
     """Records the outcome of a single match between two players.
 
     Args:
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    conn = connect()
+    # Open a cursor to perform database operations
+    cur = conn.cursor()
+
+    # Pass data to fill a query placeholders and let Psycopg perform
+    # the correct conversion (no more SQL injections!)
+    cur.execute('''
+        INSERT INTO matches (winner, loser)
+        VALUES (%s, %s);
+        ''',
+        (winner, loser)
+    )
+
+    # Make the changes to the database persistent
+    conn.commit()
+
+    # Close communication with the database
+    cur.close()
+    conn.close()
 
 
 def swissPairings():
