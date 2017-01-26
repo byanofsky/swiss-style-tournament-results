@@ -85,15 +85,15 @@ def player_standings(cur, conn):
     """
     cur.execute('''
         SELECT players.id,
-            players.name,
-            count(wins.match) as wins,
-            count(matches.id) as matches
+               players.name,
+               count(wins.match) as wins,
+               count(matches.id) as matches
         FROM players
         LEFT JOIN wins
-        ON players.id = wins.id
+            ON players.id = wins.id
         LEFT JOIN matches
-        ON players.id = matches.winner
-            OR players.id = matches.loser
+            ON players.id = matches.winner
+               OR players.id = matches.loser
         GROUP BY players.id
         ORDER BY wins DESC, players.id;
     ''')
