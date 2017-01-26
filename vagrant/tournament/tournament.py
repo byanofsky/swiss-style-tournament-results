@@ -136,37 +136,16 @@ def swiss_pairings():
         pairs.append((p1[0], p1[1], p2[0], p2[1]))
     return pairs
 
-def play_match(pair):
-    """
-    Determines winner and loser of match, based on 50/50 probability.
 
-    Args:
-      pair: tuple representing player pair (id1, name1, id2, name2)
-
-    Returns:
-      A tuple containing 2 tuples "(winner, loser)", one for winner and one for loser, each
-      containing:
-        id: player's id
-        name: player's name
-    """
-    # Determine winner and loser positions (0 or 1)
-    w = random.randint(0,1)
-    l = (w+1) % 2
-    ids = (pair[0], pair[2])
-    names = (pair[1], pair[3])
-    return ((ids[w], names[w]), (ids[l], names[l]))
-
-
-def play_one_round():
+def play_one_round(play_match):
     """
     Play one round of tournament
+
+    Args:
+      play_match: function to determine winner. Function must return tuple
+        (winner, loser) as ((id, name), (id, name))
     """
     pairings = swiss_pairings()
     for pair in pairings:
         (winner, loser) = play_match(pair)
         report_match(winner[0], loser[0])
-        print "%s beats %s" % (winner[1], loser[1])
-    print "\nMatch played. Player standings:"
-    standings = player_standings()
-    for player in standings:
-        print "    %s, wins: %s" % (player[1], player[2])
