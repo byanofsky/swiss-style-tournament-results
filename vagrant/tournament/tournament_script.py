@@ -30,17 +30,22 @@ def play_one_round():
     Play one round of tournament
     """
     pairings = swiss_pairings()
+    i = 1
     for pair in pairings:
-        # Get player ids
-        pids = [pair[0], pair[2]]
+        # Get player ids and names
+        ids = (pair[0], pair[2])
+        names = (pair[1], pair[3])
         # Determine winner and loser positions (0 or 1)
         w = random.randint(0,1)
         l = (w+1) % 2
-        report_match(pids[w], pids[l])
-    print "Match played. Player standings:"
+        report_match(ids[w], ids[l])
+        # Print outcome
+        print "%s. %s beats %s" % (i, names[w], names[l])
+        i += 1
+    print "\nMatch played. Player standings:"
     standings = player_standings()
     for player in standings:
-        print "name: %s, wins: %s" % (player[1], player[2])
+        print "    %s, wins: %s" % (player[1], player[2])
 
 # def play():
 #     """
@@ -66,4 +71,5 @@ if __name__ == '__main__':
     delete_matches()
     delete_players()
     register_8_players()
+    play_one_round()
     # random_matches(8)
