@@ -1,4 +1,5 @@
 import random
+import math
 
 from tournament import *
 
@@ -24,35 +25,45 @@ def random_matches(n):
         report_match(players[p1][0], players[p2][0])
     print "Matches reported: %s" % count_matches()
 
-def test_champion():
+def play_one_round():
     """
-    Test database to see if a champion is found.
-    # of rounds = 2
+    Play one round of tournament
     """
-    delete_matches()
-    delete_players()
-    register_player("Brandon")
-    register_player("Jeff")
-    register_player("Duncan")
-    register_player("Mackie")
+    pairings = swiss_pairings()
+    for pair in pairings:
+        # Get player ids
+        pids = [pair[0], pair[2]]
+        # Determine winner and loser positions (0 or 1)
+        w = random.randint(0,1)
+        l = (w+1) % 2
+        report_match(pids[w], pids[l])
+    print "Match played. Player standings:"
+    standings = player_standings()
+    for player in standings:
+        print "name: %s, wins: %s" % (player[1], player[2])
 
-    rounds = 2
-    for r in range(rounds):
-        standings = player_standings()
-        [id1, id2, id3, id4] = [row[0] for row in standings]
-        if random.randint(0,1):
-            report_match(id1, id2)
-        else:
-            report_match(id2, id1)
-        if random.randint(0,1):
-            report_match(id3, id4)
-        else:
-            report_match(id4, id3)
-    print player_standings()
+# def play():
+#     """
+#     Play a tournament
+#     """
+#     num_players = count_players()
+#     rounds = math.log(num_players, 2)
+#     for r in range(rounds):
+#         standings = player_standings()
+#         [id1, id2, id3, id4] = [row[0] for row in standings]
+#         if random.randint(0,1):
+#             report_match(id1, id2)
+#         else:
+#             report_match(id2, id1)
+#         if random.randint(0,1):
+#             report_match(id3, id4)
+#         else:
+#             report_match(id4, id3)
+#     print player_standings()
 
 
 if __name__ == '__main__':
     delete_matches()
     delete_players()
     register_8_players()
-    random_matches(8)
+    # random_matches(8)
