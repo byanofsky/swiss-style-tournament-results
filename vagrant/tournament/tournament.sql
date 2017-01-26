@@ -44,12 +44,10 @@ CREATE VIEW match_counts_v AS
 
 CREATE VIEW score_v AS
     SELECT players.id,
-           players.name,
            COALESCE(sum(wins.win_count), 0) AS score
     FROM players
     LEFT JOIN matches
         ON players.id = matches.winner
     LEFT JOIN win_counts_v AS wins
         ON wins.id = matches.loser
-    GROUP BY players.id
-    ORDER BY score DESC;
+    GROUP BY players.id;
