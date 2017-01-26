@@ -7,17 +7,22 @@
 -- these lines here.
 
 DROP DATABASE IF EXISTS tournament;
+
 CREATE DATABASE tournament;
+
 \c tournament
+
 CREATE TABLE players (
     id serial PRIMARY KEY,
     name text
 );
+
 CREATE TABLE matches (
     id serial PRIMARY KEY,
     winner integer REFERENCES players (id),
     loser integer REFERENCES players (id)
 );
+
 CREATE VIEW wins AS
     SELECT players.id,
         matches.id as match
@@ -25,9 +30,3 @@ CREATE VIEW wins AS
     LEFT JOIN matches
     ON players.id = matches.winner
     ORDER BY players.id;
--- CREATE TABLE winners (
---     match_id integer,
---     pid integer REFERENCES players (id),
---     PRIMARY KEY (match_id, pid),
---     FOREIGN KEY (match_id, pid) REFERENCES matches (id, pid)
--- );
