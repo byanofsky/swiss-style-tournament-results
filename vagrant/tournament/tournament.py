@@ -37,9 +37,7 @@ def delete_matches(cur, conn):
 def count_matches(cur, conn):
     """Counts total number of matches played."""
     cur.execute("SELECT count(*) FROM matches;")
-    row = cur.fetchone()
-    count = int(row[0])
-    return count
+    return cur.fetchone()[0]
 
 
 @db_connect
@@ -52,9 +50,7 @@ def delete_players(cur, conn):
 def count_players(cur, conn):
     """Returns the number of players currently registered."""
     cur.execute("SELECT count(*) FROM players;")
-    row = cur.fetchone()
-    count = int(row[0])
-    return count
+    return cur.fetchone()[0]
 
 @db_connect
 def register_player(cur, conn, name):
