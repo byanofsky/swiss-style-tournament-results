@@ -2,8 +2,11 @@
 #
 # tournament.py -- implementation of a Swiss-system tournament
 #
-from functools import wraps
+
 import psycopg2
+import random
+import math
+from functools import wraps
 
 
 def db_connect(f):
@@ -130,3 +133,25 @@ def swiss_pairings():
         p2 = standings.pop(0)
         pairs.append((p1[0], p1[1], p2[0], p2[1]))
     return pairs
+
+def play_one_round():
+    """
+    Play one round of tournament
+    """
+    pairings = swiss_pairings()
+    i = 1
+    for pair in pairings:
+        # Get player ids and names
+        ids = (pair[0], pair[2])
+        names = (pair[1], pair[3])
+        # Determine winner and loser positions (0 or 1)
+        w = random.randint(0,1)
+        l = (w+1) % 2
+        report_match(ids[w], ids[l])
+        # Print outcome
+        print "%s. %s beats %s" % (i, names[w], names[l])
+        i += 1
+    print "\nMatch played. Player standings:"
+    standings = player_standings()
+    for player in standings:
+        print "    %s, wins: %s" % (player[1], player[2])
