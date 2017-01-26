@@ -32,6 +32,16 @@ def delete_matches(cur, conn):
     cur.execute("DELETE FROM matches;")
     conn.commit()
 
+
+@db_connect
+def count_matches(cur, conn):
+    """Counts total number of matches played."""
+    cur.execute("SELECT count(*) FROM matches;")
+    row = cur.fetchone()
+    count = int(row[0])
+    return count
+
+
 @db_connect
 def delete_players(cur, conn):
     """Remove all the player records from the database."""
