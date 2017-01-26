@@ -9,7 +9,7 @@ import random
 
 from tournament import *
 
-def test_count():
+def test_count_players():
     """
     Test for initial player count,
              player count after 1 and 2 players registered,
@@ -178,7 +178,7 @@ def test_champion():
 
 
 if __name__ == '__main__':
-    test_count()
+    test_count_players()
     test_standings_before_matches()
     test_report_matches()
     test_pairings()
