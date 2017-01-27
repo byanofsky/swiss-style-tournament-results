@@ -70,7 +70,9 @@ def register_player(cur, conn, name):
 
 @db_connect
 def player_standings(cur, conn):
-    """Returns a list of the players and their win records, sorted by wins.
+    """
+    Returns a list of the players and their win records, sorted by wins,
+    then by score, then by player_id.
 
     The first entry in the list should be the player in first place, or a player
     tied for first place if there is currently a tie.
@@ -94,7 +96,7 @@ def player_standings(cur, conn):
             ON players.id = match_c.id
         LEFT JOIN score_v
             ON players.id = score_v.id
-        ORDER BY wins DESC, score_v.score DESC;
+        ORDER BY wins DESC, score_v.score DESC, players.id;
     ''')
     return cur.fetchall()
 
