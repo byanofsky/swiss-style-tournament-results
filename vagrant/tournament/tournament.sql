@@ -30,8 +30,7 @@ CREATE VIEW win_counts_v AS
     FROM players
     LEFT JOIN matches
     ON players.id = matches.winner
-    GROUP BY players.id
-    ORDER BY players.id;
+    GROUP BY players.id;
 
 -- A view for count of matches for each player
 CREATE VIEW match_counts_v AS
@@ -41,8 +40,7 @@ CREATE VIEW match_counts_v AS
     LEFT JOIN matches
     ON players.id = matches.winner
         OR players.id = matches.loser
-    GROUP BY players.id
-    ORDER BY players.id;
+    GROUP BY players.id;
 
 -- A view for each player's score (sum of beaten opponents' scores)
 CREATE VIEW score_v AS
