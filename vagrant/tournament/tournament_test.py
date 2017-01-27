@@ -189,7 +189,8 @@ def test_play_one_round():
 
 def test_play_full_tournament_manual():
     """
-    Tests that pairings are correct after a full tournament (in this case, 3 rounds).
+    Tests that pairings are correct after a full tournament (in this case, 3 rounds),
+    done with the play_one_round function.
     Winners are predetermined to allow for testing.
     """
     delete_matches()
@@ -215,7 +216,7 @@ def test_play_full_tournament_manual():
 
 def test_play_full_tournament():
     """
-    Tests that standings are correct after a full tournament.
+    Tests that standings are correct after a full tournament, using play_tournament function.
     Winners are predetermined to allow for testing.
     """
     delete_matches()
