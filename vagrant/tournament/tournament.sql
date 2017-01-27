@@ -27,7 +27,7 @@ CREATE TABLE matches (
 CREATE TABLE tournament (
   id serial PRIMARY KEY,
   name text
-)
+);
 
 -- A view for count of wins for each player
 CREATE VIEW win_counts_v AS
