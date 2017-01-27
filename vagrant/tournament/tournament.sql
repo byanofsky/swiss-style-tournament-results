@@ -23,6 +23,12 @@ CREATE TABLE matches (
   loser integer REFERENCES players (id)
 );
 
+-- For adding multi-tournament functionality
+CREATE TABLE tournament (
+  id serial PRIMARY KEY,
+  name text
+)
+
 -- A view for count of wins for each player
 CREATE VIEW win_counts_v AS
   SELECT
