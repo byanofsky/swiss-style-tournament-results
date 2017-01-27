@@ -23,6 +23,7 @@ CREATE TABLE matches (
     loser integer REFERENCES players (id)
 );
 
+-- A view for count of wins for each player
 CREATE VIEW win_counts_v AS
     SELECT players.id,
         count(matches.id) AS win_count
@@ -32,6 +33,7 @@ CREATE VIEW win_counts_v AS
     GROUP BY players.id
     ORDER BY players.id;
 
+-- A view for count of matches for each player
 CREATE VIEW match_counts_v AS
     SELECT players.id,
         count(matches.id) AS match_count
@@ -42,6 +44,7 @@ CREATE VIEW match_counts_v AS
     GROUP BY players.id
     ORDER BY players.id;
 
+-- A view for each player's score (sum of beaten opponents' scores)
 CREATE VIEW score_v AS
     SELECT players.id,
            COALESCE(sum(wins.win_count), 0) AS score
