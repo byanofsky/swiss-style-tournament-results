@@ -139,15 +139,53 @@ def swiss_pairings():
     return pairs
 
 
-def play_one_round(play_match):
+def win_half(pair):
     """
-    Play one round of tournament
+    Determines winner and loser of match, based on 50/50 probability.
 
     Args:
-      play_match: function to determine winner. Function must return tuple
+      pair: tuple representing player pair (id1, name1, id2, name2)
+
+    Returns:
+      A tuple containing 2 tuples "(winner, loser)", one for winner and one for loser, each
+      containing:
+        id: player's id
+        name: player's name
+    """
+    # Determine winner and loser positions (0 or 1)
+    w = random.randint(0,1)
+    l = (w+1) % 2
+    ids = (pair[0], pair[2])
+    names = (pair[1], pair[3])
+    return ((ids[w], names[w]), (ids[l], names[l]))
+
+
+def play_one_round(match_f=win_half):
+    """
+    Play one round of tournament.
+
+    Args:
+      match_f: function to determine winner. Function must return tuple
         (winner, loser) as ((id, name), (id, name))
     """
     pairings = swiss_pairings()
     for pair in pairings:
-        (winner, loser) = play_match(pair)
+        (winner, loser) = match_f(pair)
         report_match(winner[0], loser[0])
+
+def play_tournament(match_f=win_half):
+    """
+    Play a tournament.
+
+    Args:
+      match_f: function to determine winner. Function must return tuple
+        (winner, loser) as ((id, name), (id, name))
+
+    Returns:
+      Player standings at end of tournament.
+    """
+    num_players = count_players()
+    rounds = math.log(num_players, 2)
+    for r in range(int(rounds)):
+        play_one_round(match_f)
+    return player_standings()
