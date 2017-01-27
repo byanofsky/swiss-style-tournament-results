@@ -164,11 +164,60 @@ def test_pairings():
     print "10. After one match, players with one win are properly paired."
 
 
+def test_play_one_round():
+    """
+    Tests standings are correct after one round of play.
+    """
+    delete_matches()
+    delete_players()
+    register_player("Brandon")
+    register_player("Jeff")
+    register_player("Mackie")
+    register_player("Duncan")
+    register_player("Mo")
+    register_player("Chris")
+    register_player("Ricardo")
+    register_player("Colin")
+    standings = player_standings()
+    [id1, id2, id3, id4, id5, id6, id7, id8] = [row[0] for row in standings]
+    play_one_round(lambda p: ((p[0], p[1]), (p[2], p[3])))
+    standings = player_standings()
+    if [id1, id3, id5, id7, id2, id4, id6, id8] != [row[0] for row in standings]:
+        raise ValueError(
+            "After one round played, players should be in correct standings.")
+    print "11. After play_one_round is run, players are in proper standings."
 
+def test_play_full_tournament():
+    """
+    Tests that pairings are correct after a full tournament (in this case, 3 rounds).
+    Winners are predetermined to allow for testing.
+    """
+    delete_matches()
+    delete_players()
+    register_player("Brandon")
+    register_player("Jeff")
+    register_player("Mackie")
+    register_player("Duncan")
+    register_player("Mo")
+    register_player("Chris")
+    register_player("Ricardo")
+    register_player("Colin")
+    standings = player_standings()
+    [id1, id2, id3, id4, id5, id6, id7, id8] = [row[0] for row in standings]
+    play_one_round(lambda p: ((p[0], p[1]), (p[2], p[3])))
+    play_one_round(lambda p: ((p[0], p[1]), (p[2], p[3])))
+    play_one_round(lambda p: ((p[0], p[1]), (p[2], p[3])))
+    standings = player_standings()
+    if [id1, id5, id2, id6, id3, id4, id7, id8] != [row[0] for row in standings]:
+        raise ValueError(
+            "After 3 rounds played, players should be in correct standings.")
+    print "12. After 3 rounds played, players are in proper standings."
 
 if __name__ == '__main__':
     test_count_players()
     test_standings_before_matches()
     test_report_matches()
     test_pairings()
+    test_play_one_round()
+    test_play_full_tournament()
     print "Success!  All tests pass!"
