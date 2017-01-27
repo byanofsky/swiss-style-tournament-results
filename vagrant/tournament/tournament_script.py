@@ -5,6 +5,7 @@
 
 from tournament import *
 
+
 def register_8_players():
     register_player("Brandon")
     register_player("Jeff")
@@ -16,13 +17,14 @@ def register_8_players():
     register_player("Colin")
     print "Players registered: %s" % count_players()
 
+
 def random_matches(n):
     num_players = count_players()
     for i in range(n):
-        p1 = random.randint(0,num_players-1)
-        p2 = random.randint(0,num_players-1)
+        p1 = random.randint(0, num_players-1)
+        p2 = random.randint(0, num_players-1)
         while p1 == p2:
-            p2 = random.randint(0,num_players-1)
+            p2 = random.randint(0, num_players-1)
         players = player_standings()
         report_match(players[p1][0], players[p2][0])
     print "Matches reported: %s" % count_matches()
@@ -33,6 +35,6 @@ if __name__ == '__main__':
     delete_players()
     register_8_players()
     standings = play_tournament()
-    print "\nMatch played. Player standings:"
+    print "Tournament complete.\nPlayer standings:"
     for player in standings:
         print "    %s, wins: %s" % (player[1], player[2])

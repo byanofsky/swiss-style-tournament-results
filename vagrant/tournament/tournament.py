@@ -49,11 +49,13 @@ def delete_players(cur, conn):
     cur.execute("DELETE FROM players;")
     conn.commit()
 
+
 @db_connect
 def count_players(cur, conn):
     """Returns the number of players currently registered."""
     cur.execute("SELECT count(*) FROM players;")
     return cur.fetchone()[0]
+
 
 @db_connect
 def register_player(cur, conn, name):
@@ -68,14 +70,15 @@ def register_player(cur, conn, name):
     cur.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     conn.commit()
 
+
 @db_connect
 def player_standings(cur, conn):
     """
     Returns a list of the players and their win records, sorted by wins,
     then by score, then by player_id.
 
-    The first entry in the list should be the player in first place, or a player
-    tied for first place if there is currently a tie.
+    The first entry in the list should be the player in first place, or a
+    player tied for first place if there is currently a tie.
 
     Returns:
       A list of tuples, each of which contains (id, name, wins, matches):
@@ -85,20 +88,22 @@ def player_standings(cur, conn):
         matches: the number of matches the player has played
     """
     cur.execute('''
-        SELECT players.id,
-               players.name,
-               win_c.win_count as wins,
-               match_c.match_count as total_matches
+        SELECT
+          players.id,
+          players.name,
+          win_c.win_count AS wins,
+          match_c.match_count AS total_matches
         FROM players
-        LEFT JOIN win_counts_v as win_c
-            ON players.id = win_c.id
-        LEFT JOIN match_counts_v as match_c
-            ON players.id = match_c.id
-        LEFT JOIN score_v
-            ON players.id = score_v.id
-        ORDER BY wins DESC, score_v.score DESC, players.id;
+        LEFT JOIN win_counts_v AS win_c ON players.id = win_c.id
+        LEFT JOIN match_counts_v AS match_c ON players.id = match_c.id
+        LEFT JOIN score_v ON players.id = score_v.id
+        ORDER BY
+          wins DESC,
+          score_v.score DESC,
+          players.id;
     ''')
     return cur.fetchall()
+
 
 @db_connect
 def report_match(cur, conn, winner, loser):
@@ -108,10 +113,8 @@ def report_match(cur, conn, winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    cur.execute(
-        "INSERT INTO matches (winner, loser) VALUES (%s, %s);",
-        (winner, loser)
-    )
+    cur.execute("INSERT INTO matches (winner, loser) VALUES (%s, %s);",
+                (winner, loser))
     conn.commit()
 
 
@@ -141,23 +144,23 @@ def swiss_pairings():
 
 def win_half(pair):
     """
-    Determines winner and loser of match, based on 50/50 probability.
+    Determines winner and loser of a match, based on 50/50 probability.
 
     Args:
       pair: tuple representing player pair (id1, name1, id2, name2)
 
     Returns:
-      A tuple containing 2 tuples "(winner, loser)", one for winner and one for loser, each
-      containing:
+      A list containing 2 tuples "[winner, loser]", one for winner
+      and one for loser, each containing:
         id: player's id
         name: player's name
     """
     # Determine winner and loser positions (0 or 1)
-    w = random.randint(0,1)
+    w = random.randint(0, 1)
     l = (w+1) % 2
     ids = (pair[0], pair[2])
     names = (pair[1], pair[3])
-    return ((ids[w], names[w]), (ids[l], names[l]))
+    return [(ids[w], names[w]), (ids[l], names[l])]
 
 
 def play_one_round(match_f=win_half):
@@ -165,27 +168,29 @@ def play_one_round(match_f=win_half):
     Play one round of tournament.
 
     Args:
-      match_f: function to determine winner. Function must return tuple
-        (winner, loser) as ((id, name), (id, name))
+      match_f: function to determine winner. Function must return
+      list of tuples as such:
+        [winner, loser] as [(id, name), (id, name)]
     """
     pairings = swiss_pairings()
     for pair in pairings:
         (winner, loser) = match_f(pair)
         report_match(winner[0], loser[0])
 
+
 def play_tournament(match_f=win_half):
     """
     Play a tournament.
 
     Args:
-      match_f: function to determine winner. Function must return tuple
-        (winner, loser) as ((id, name), (id, name))
+      match_f: function to determine winner. Function must return
+      list of tuples as such:
+        [winner, loser] as [(id, name), (id, name)]
 
     Returns:
       Player standings at end of tournament.
     """
-    num_players = count_players()
-    rounds = math.log(num_players, 2)
+    rounds = math.log(count_players(), 2)
     for r in range(int(rounds)):
         play_one_round(match_f)
     return player_standings()
